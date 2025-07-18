@@ -169,3 +169,127 @@ vector<int> solutionAnswer(vector<int> numbers) {
 문제를 통해 중복 값이 존재해서는 안된다는 숨은 조건을 잘 파악하였으나, 내 코드에서 한가지 아쉬운 점이 있었음. 자동으로 오름차순 정렬과 중복 값을 제거해주는 set 컨테이너를 활용하는 것이 훨씬 간단한 방법이었음. 
 
 → STL에서 제공하는 컨테이너의 각 특징을 잘 기억하고 항상 문제에서 어떤 컨테이너가 가장 적합하고 효율적일지 고민하면서 풀어야 함.
+
+## 모의고사
+
+### 문제1
+
+(풀이)
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <map>
+
+using namespace std;
+
+vector<int> solution(vector<int> answers) {
+	vector<int> first = { 1,2,3,4,5 };
+	vector<int> second = { 2,1,2,3,2,4,2,5 };
+	vector<int> third = { 3,3,1,1,2,2,4,4,5,5 };
+
+	vector<int> correctAnswers;
+
+	// 1번 채점. 정답이면 1을 집어넣음
+	auto j = first.begin();
+	for (auto i = answers.begin(); i < answers.end(); ++i, ++j) {
+		if (j == first.end()) {
+			j = first.begin();
+		}
+
+		if (*j == *i) {
+			correctAnswers.push_back(1);
+		}
+	}
+
+	// 2번 채점. 정답이면 2를 집어넣음
+	auto j = second.begin();
+	for (auto i = answers.begin(); i < answers.end(); ++i, ++j) {
+		if (j == second.end()) {
+			j = second.begin();
+		}
+
+		if (*j == *i) {
+			correctAnswers.push_back(2);
+		}
+	}
+
+	// 3번 채점. 정답이면 3을 집어넣음
+	auto j = third.begin();
+	for (auto i = answers.begin(); i < answers.end(); ++i, ++j) {
+		if (j == third.end()) {
+			j = third.begin();
+		}
+
+		if (*j == *i) {
+			correctAnswers.push_back(3);
+		}
+	}
+	
+	// 1,2,3 개수를 통해 맞은 개수를 도출
+	vector<int> score;
+	int one = count(correctAnswers.begin(), correctAnswers.end(), 1);
+	int two = count(correctAnswers.begin(), correctAnswers.end(), 1);
+	int three = count(correctAnswers.begin(), correctAnswers.end(), 1);
+	score = { one,two, three };
+
+	int maxScore = *max_element(score.begin(), score.end());
+	vector<int> result;
+	for (int i = 0; i < 3; i++) {
+		if (score[i] == maxScore) {
+			result.push_back(i + 1);
+		}
+	}
+
+	return result;
+}
+```
+
+(모범 답안)
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+vector<int> solution(vector<int> answers) {
+	vector<int> firstPattern = { 1,2,3,4,5 };
+	vector<int> secondPattern = { 2,1,2,3,2,4,2,5 };
+	vector<int> thirdPattern = { 3,3,1,1,2,2,4,4,5,5 };
+
+	// 맞은 정답 수를 셀 벡터
+	vector<int> correctCnt = { 0 };
+
+	// answers를 순회하면서 정답이 맞는지 체크
+	for (int i = 0; i < answers.size(); i++) {
+		if (answers[i] == firstPattern [i % first.size()]) correctCnt[0]++;
+		if (answers[i] == secondPattern [i % first.size()]) correctCnt[1]++;
+		if (answers[i] == thirdPattern [i % first.size()]) correctCnt[2]++;
+	}
+
+	// 가장 많은 정답을 맞춘 인덱스 찾기
+	int maxScore = *max_element(correctCnt.begin(), correctCnt.end());
+	vector<int> result;
+	for (int i = 0; i < 3; i++) {
+		if (correctCnt[i] == maxScore) {
+			result.push_back(i+1);
+		}
+	}
+
+	return result;
+}
+```
+
+제한 시간 내에 문제를 직접 분석하고 풀이해 보았을 때 다음과 같은 점을 느꼈음.
+
+1. 1번 2번 3번의 답 패턴 배열 끝에 도달하면 다시 첫번째 인덱스로 이동하는 코드를 직접 작성하였으나, 모범 답안에서는 모듈러 연산을 이용해서 구현한 점이 차이가 있었음. 앞으로, 위와 같이 끝에 도달하면 다시 처음으로 돌아가는 배열의 경우 모듈러 연산을 활용해야겠음.
+2. 모범 답안처럼 정답 개수를 증가시키면 되는 간단한 내용을 숫자를 삽입하고 숫자 개수를 측정하는 식으로 코드를 구성해서 더 복잡하게 풀이하였음. 더 간단하게 풀 수 있는 방법을 좀 더 고민하는 시간을 가질 필요를 느낌.
+
+>💡모듈러 연산 %
+>
+>나눗셈의 나머지를 구하는 연산자로, 특정 수를 N으로 나누면 나머지의 범위가 0 ~ N-1의 범위
+>
+>이를 통해, 배열의 맨 앞과 맨 뒤를 원으로 붙여 놓은 것과 같이 순환해야할 때 이용할 수 있음
