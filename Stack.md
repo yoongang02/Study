@@ -164,3 +164,137 @@ bool solution(string s){
     - 모범 답안이 괄호의 특성을 더욱 잘 이용한 풀이라고 생각 됨.
         
         특히, 스택이 비어있을 때 ‘ ) ‘ 가 먼저 나오면 절대 괄호가 닫힐 수 없기 때문에 바로 false를 리턴함으로써 조기 반환이 되도록 코드를 구성한 것이 배워야 할 점이라고 생각 됨.
+
+### 2. 10진수를 2진수로 변환하기
+
+
+>💡10진수 decimal을 입력받아 2진수로 변환해서 문자열 형태로 반환하는 solution( ) 함수를 구현
+
+
+<내 풀이>
+
+```cpp
+#include <iostream>
+#include <stack>
+#include <string>
+
+using namespace std;
+
+string solution(int decimal) {
+	stack<int> s;
+
+	do {
+		s.push(decimal % 2);
+		decimal = decimal / 2;
+	} while (decimal != 0);
+
+	string result;
+	while (!s.empty()) {
+		result += to_string(s.top());
+		s.pop();
+	}
+
+	return result;
+}
+```
+
+<img width="395" height="188" alt="Image" src="https://github.com/user-attachments/assets/735aaa05-539d-456b-bee2-bdf5f8d44de8" />
+
+올바르게 출력 됨을 확인 함.
+
+<모범 답안>
+
+```cpp
+#include <stack>
+#include <string>
+
+using namespace std;
+
+string solution(int decimal){
+	if(decimal == 0) return "0";
+	
+	stack<int> stack;
+	while(decimal > 0){
+		stack.push(decimal % 2);
+		decimal /= 2;
+	}
+	
+	string binary = "";
+	while(!stack.empty()){
+		binary += to_string(stack.top());
+		stack.pop();
+	}
+	return binary;
+}
+```
+
+<풀이 비교>
+
+- 모범답안은 0인 경우를 조기 반환 후, while 문을 통해 decimal > 0 일 때에 작동되게 함.
+- 내 코드는 0인 경우 조기 반환을 하지 않고, do while문을 사용해 0일 때를 커버함. 만약, while문을 사용했다면 0일 때를 커버하지 못했을 것임.
+
+---
+
+## 모의고사
+
+### 문제1 - 괄호 회전하기
+
+
+>💡<올바른 괄호 문자열 조건>
+>
+>“( )” , “[ ]” , “{ }” 은 모두 올바른 괄호 문자열
+>
+>만약 A가 올바른 문자열이라면, “(A)”, “[A]”, “{A}” 도 올바른 괄호 문자열.
+>
+>“[ ]”가 올바른 문자열이므로, “( [ ] )” 도 올바른 괄호 문자열
+>
+>만약 A,B가 올바른 문자열이라면, AB도 올바른 괄호 문자열
+>
+>“{ }”와 “( [ ] )”가 올바른 문자열이므로, “{ } ( [ ] )”도 올바른 괄호 문자열
+>
+><문제>
+>
+>대괄호, 중괄호, 소괄호로 이루어진 문자열 s가 매개변수로 주어짐. 이 s를 왼쪽으로 x (0≤ x < s길이) 칸만큼 회전시켰을 때, s가 올바른 괄호 문자열이 되게 하는 x의 개수를 반환하는 solution( ) 함수를 작성
+
+
+
+```cpp
+#include <iostream>
+#include <stack>
+#include <unordered_map>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+unordered_map<char, char> bracketPair = { {')','('}, {']','['}, {'}','{'} };
+
+bool isValid(string& s, int start) {
+	stack<char> stk;
+	unsigned int size = s.size();
+
+	for (int i = 0; i < sz; i++) {
+		char ch = s[(start + i) % size];
+
+		if (bracketPair.count(ch)) {
+			if (stk.empty() || stk.top() != bracketPair[ch]) return false;
+			stk.pop();
+		}
+		else {
+			stk.push(ch);
+		}
+	}
+	return stk.empty();
+}
+
+int solution(string s) {
+	int answer = 0;
+	int n = s.size();
+
+	for (int i = 0; i < n; i++) {
+		answer += isValid(s, i);
+	}
+
+	return answer;
+}
+```
