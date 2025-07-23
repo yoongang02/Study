@@ -298,3 +298,81 @@ int solution(string s) {
 	return answer;
 }
 ```
+### 문제2 - 짝지어 제거하기
+
+
+>💡<문제>
+>
+>알파벳 소문자로 구성된 문자열에서 같은 알파벳 2개 붙어있는 짝을 찾습니다. 짝을 찾은 다음에는 그 둘을 제거한 뒤 앞뒤로 문자열을 이어 붙입니다. 이 과정을 반복해서 문자열을 모두 제거한다면 짝지어 제거하기가 종료됩니다. 문자열 S가 주어졌을 때 짝지어 제거하기를 성공적으로 수행할 수 있는지를 반환하는 함수를 완성하세요. 성공적으로 수행할 수 있다면 1을, 아니면 0을 반환합니다.
+>
+><제약 조건>
+>
+>문자열의 길이 : 1,000,000 이하의 자연수
+>
+>문자열은 모두 소문자로 이루어져 있습니다.
+
+
+
+```cpp
+#include <iostream>
+#include <stack>
+#include <string>
+
+using namespace std;
+
+int solution(string s){
+	stack<char> stack;
+	
+	for(int i=0; i<s.length(); i++){
+		if(stack.empty() || stack.top() != s[i]) stack.push(s[i]);
+		else stack.pop();
+	}
+	s
+	return stack.empty();
+}
+```
+
+### 문제 3 - 주식 가격
+
+
+>💡<문제>
+>
+>초 단위로 기록된 주식 가격이 담긴 배열 prices가 매개변수로 주어질 때, 가격이 떨어지지 않은 기간은 몇 초인지를 반환하는 solution( ) 함수를 완성하세요.
+>
+><제약 조건>
+>
+>prices의 각 가격은 1 이상 10,000 이하인 자연수입니다.
+>
+>prices의 길이는 2 이상 100,000 이하입니다.
+
+
+
+```cpp
+#include <iostream>
+#include <stack>
+#include <vector>
+
+using namespace std;
+
+vector<int> solution(vector<int> prices){
+	vector<int> answer(prices.size());
+	stack<int> stack;
+	
+	int pirceCnt = prices.size();
+	
+	for(int i=0; i<priceCnt; i++){
+		while(!stack.empty() && prices[stack.top()] > prices[i]){
+			answer[stack.top()] = i - stack.top();
+			stack.pop(); 
+		}
+		stack.push(i);
+	}
+	
+	while(!stack.empty()){
+		answer[stack.top()) = priceNum - stack.top() - i;
+		stack.pop();
+	}
+
+	return answer;
+}
+```
